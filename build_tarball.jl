@@ -3,7 +3,7 @@
 using BinaryBuilder, Pkg
 
 name = "OpenCV"
-version = v"0.2.2"
+version = v"0.2.3"
 
 # Collection of sources required to complete build
 sources = [
@@ -26,7 +26,7 @@ cd build
 cmake -DCMAKE_FIND_ROOT_PATH=$prefix \
       -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
       $macos_extra_flags -DCMAKE_BUILD_TYPE=Release \
-      WITH_QT=ON \
+      -DWITH_QT=ON \
       ../opencv/
 VERBOSE=ON cmake --build . --config Release --target install -- -j${nproc}
 cd ..
@@ -67,7 +67,8 @@ products = [
 
 # Dependencies that must be installed before this package can be built
 dependencies = [
-    BuildDependency("Qt_jll")
+    Dependency("Qt_jll"),
+    Dependency("GTK3_jll"),
 ]
 
 # Build the tarballs, and possibly a `build.jl` as well.
