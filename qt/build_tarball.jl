@@ -2,7 +2,7 @@
 # `julia build_tarballs.jl --help` to see a usage message.
 using BinaryBuilder, Pkg
 
-name = "OpenCV"
+name = "OpenCVQt"
 version = v"0.3.0"
 
 # Collection of sources required to complete build
