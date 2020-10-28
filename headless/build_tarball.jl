@@ -3,7 +3,7 @@
 using BinaryBuilder, Pkg
 
 name = "OpenCV"
-version = v"0.2.5"
+version = v"0.4.0"
 
 # Collection of sources required to complete build
 sources = [
