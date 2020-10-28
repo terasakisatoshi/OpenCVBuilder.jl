@@ -1,5 +1,6 @@
 # OpenCVBuilder.jl
-Build script for OpenCV_jll.jl
+
+Build script for OpenCV_jll.jl and OpenCVQt_jll.jl
 
 # Usage
 
