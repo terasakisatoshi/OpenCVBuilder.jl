@@ -3,7 +3,7 @@
 using BinaryBuilder, Pkg
 
 name = "OpenCVQt"
-version = v"0.4.1"
+version = v"0.5.0"
 
 # Collection of sources required to complete build
 sources = [
@@ -23,13 +23,19 @@ if [[ $target == *"-linux-gnu"* ]]; then
   gui_flags="-DWITH_QT=ON"
 fi
 
+if [[ $target == "arm-linux-gnueabihf"* ]]; then
+  armv7l_linux_flags="-latomic"
+fi
+
 Julia_PREFIX=$prefix
 
 mkdir build
 cd build
 cmake -DCMAKE_FIND_ROOT_PATH=$prefix \
       -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
-      $macos_extra_flags -DCMAKE_BUILD_TYPE=Release \
+      $macos_extra_flags \
+      -DCMAKE_CXX_LINK_FLAGS=$armv7l_linux_flags \
+      -DCMAKE_BUILD_TYPE=Release \
       $gui_flags \
       ../opencv/
 VERBOSE=ON cmake --build . --config Release --target install -- -j${nproc}
@@ -40,11 +46,11 @@ install_license opencv/LICENSE
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
 platforms = [
-    #FreeBSD(:x86_64; compiler_abi=CompilerABI(cxxstring_abi=:cxx11)), <- fails
+    #FreeBSD(:x86_64), <- fails
     Linux(:armv7l; libc=:glibc),
-    #Linux(:aarch64; libc=:glibc, compiler_abi=CompilerABI(cxxstring_abi=:cxx11)), <- Qt_jll does not support
+    Linux(:aarch64; libc=:glibc),
     Linux(:x86_64; libc=:glibc),
-    #Linux(:i686; libc=:glibc, compiler_abi=CompilerABI(cxxstring_abi=:cxx11)), <- fails
+    #Linux(:i686), <- fails
     MacOS(:x86_64),
     Windows(:x86_64),
     Windows(:i686),
@@ -71,8 +77,8 @@ products = [
 
 # Dependencies that must be installed before this package can be built
 dependencies = [
-    Dependency("Qt_jll"),
-    Dependency("GTK3_jll"),
+    Dependency(PackageSpec(name="Qt_jll", version="5.15.1")),
+    Dependency(PackageSpec(name="Libglvnd_jll", version="1.3.0")),
 ]
 
 # Build the tarballs, and possibly a `build.jl` as well.
