@@ -3,7 +3,7 @@
 using BinaryBuilder, Pkg
 
 name = "OpenCVQt"
-version = v"0.5.0"
+version = v"0.6.0"
 
 # Collection of sources required to complete build
 sources = [
@@ -14,29 +14,26 @@ sources = [
 ]
 # Bash recipe for building across all platforms
 script = raw"""
-# Override compiler ID to silence the horrible "No features found" cmake error
-if [[ $target == *"apple-darwin"* ]]; then
-  macos_extra_flags="-DCMAKE_CXX_COMPILER_ID=AppleClang -DCMAKE_CXX_COMPILER_VERSION=10.0.0 -DCMAKE_CXX_STANDARD_COMPUTED_DEFAULT=11"
+
+# Build with Qt for linux platform except i686
+if [[ $target == "x86_64-linux-gnu" ]]; then
+  linux_extra_flags="-DWITH_QT=ON"
 fi
 
-if [[ $target == *"-linux-gnu"* ]]; then
-  gui_flags="-DWITH_QT=ON"
+if [[ $target == "aarch64-linux-gnu" ]]; then
+  linux_extra_flags="-DWITH_QT=ON"
 fi
-
-if [[ $target == "arm-linux-gnueabihf"* ]]; then
-  armv7l_linux_flags="-latomic"
+  
+if [[ $target == "arm-linux-gnueabihf" ]]; then
+  linux_extra_flags="-DWITH_QT=ON -DCMAKE_CXX_LINK_FLAGS=-latomic"
 fi
-
-Julia_PREFIX=$prefix
 
 mkdir build
 cd build
 cmake -DCMAKE_FIND_ROOT_PATH=$prefix \
       -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
-      $macos_extra_flags \
-      -DCMAKE_CXX_LINK_FLAGS=$armv7l_linux_flags \
       -DCMAKE_BUILD_TYPE=Release \
-      $gui_flags \
+      $linux_extra_flags \
       ../opencv/
 VERBOSE=ON cmake --build . --config Release --target install -- -j${nproc}
 cd ..
@@ -50,7 +47,7 @@ platforms = [
     Linux(:armv7l; libc=:glibc),
     Linux(:aarch64; libc=:glibc),
     Linux(:x86_64; libc=:glibc),
-    #Linux(:i686), <- fails
+    Linux(:i686),
     MacOS(:x86_64),
     Windows(:x86_64),
     Windows(:i686),
