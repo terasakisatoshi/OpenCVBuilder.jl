@@ -47,7 +47,7 @@ platforms = [
     Linux(:armv7l; libc=:glibc),
     Linux(:aarch64; libc=:glibc),
     Linux(:x86_64; libc=:glibc),
-    Linux(:i686),
+    Linux(:i686; libc=:glibc),
     MacOS(:x86_64),
     Windows(:x86_64),
     Windows(:i686),
