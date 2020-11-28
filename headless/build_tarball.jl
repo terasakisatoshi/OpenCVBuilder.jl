@@ -3,7 +3,7 @@
 using BinaryBuilder, Pkg
 
 name = "OpenCV"
-version = v"0.4.1"
+version = v"0.5.0"
 
 # Collection of sources required to complete build
 sources = [
@@ -14,18 +14,13 @@ sources = [
 ]
 # Bash recipe for building across all platforms
 script = raw"""
-# Override compiler ID to silence the horrible "No features found" cmake error
-if [[ $target == *"apple-darwin"* ]]; then
-  macos_extra_flags="-DCMAKE_CXX_COMPILER_ID=AppleClang -DCMAKE_CXX_COMPILER_VERSION=10.0.0 -DCMAKE_CXX_STANDARD_COMPUTED_DEFAULT=11"
-fi
-
 Julia_PREFIX=$prefix
 
 mkdir build
 cd build
 cmake -DCMAKE_FIND_ROOT_PATH=$prefix \
       -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TARGET_TOOLCHAIN} \
-      $macos_extra_flags -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_BUILD_TYPE=Release \
       ../opencv/
 VERBOSE=ON cmake --build . --config Release --target install -- -j${nproc}
 cd ..
@@ -35,14 +30,19 @@ install_license opencv/LICENSE
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
 platforms = [
-    #FreeBSD(:x86_64; compiler_abi=CompilerABI(cxxstring_abi=:cxx11)), <- fails
-    Linux(:armv7l; libc=:glibc),
-    Linux(:aarch64; libc=:glibc),
-    Linux(:x86_64; libc=:glibc),
-    Linux(:i686; libc=:glibc),
-    MacOS(:x86_64),
-    Windows(:x86_64),
-    Windows(:i686),
+ Linux(:i686, libc=:glibc),
+ Linux(:x86_64, libc=:glibc),
+ Linux(:aarch64, libc=:glibc),
+ Linux(:armv7l, libc=:glibc, call_abi=:eabihf),
+ Linux(:powerpc64le, libc=:glibc),
+ Linux(:i686, libc=:musl),
+ Linux(:x86_64, libc=:musl),
+ Linux(:aarch64, libc=:musl),
+ Linux(:armv7l, libc=:musl, call_abi=:eabihf),
+ MacOS(:x86_64),
+ #FreeBSD(:x86_64), <- fails,
+ Windows(:i686),
+ Windows(:x86_64),
 ] |> expand_cxxstring_abis
                                 
 # The products that we will ensure are always built
