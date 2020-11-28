@@ -3,7 +3,7 @@
 using BinaryBuilder, Pkg
 
 name = "OpenCVQt"
-version = v"0.6.0"
+version = v"0.7.0"
 
 # Collection of sources required to complete build
 sources = [
@@ -43,16 +43,21 @@ install_license opencv/LICENSE
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
 platforms = [
-    #FreeBSD(:x86_64), <- fails
-    Linux(:armv7l; libc=:glibc),
-    Linux(:aarch64; libc=:glibc),
-    Linux(:x86_64; libc=:glibc),
-    Linux(:i686; libc=:glibc),
-    MacOS(:x86_64),
-    Windows(:x86_64),
-    Windows(:i686),
+   Linux(:i686, libc=:glibc),
+   Linux(:x86_64, libc=:glibc),
+   Linux(:aarch64, libc=:glibc),
+   Linux(:armv7l, libc=:glibc, call_abi=:eabihf),
+   #Linux(:powerpc64le, libc=:glibc), <- build should pass, but it takes much time to build.
+   Linux(:i686, libc=:musl),
+   #Linux(:x86_64, libc=:musl), <- fails
+   Linux(:aarch64, libc=:musl),
+   Linux(:armv7l, libc=:musl, call_abi=:eabihf),
+   MacOS(:x86_64),
+   #FreeBSD(:x86_64), <- fails,
+   Windows(:i686),
+   Windows(:x86_64),
 ] |> expand_cxxstring_abis
-                                
+
 # The products that we will ensure are always built
 products = [
     LibraryProduct(["libopencv_calib3d", "libopencv_calib3d450"], :libopencv_calib3d),
