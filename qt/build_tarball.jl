@@ -3,7 +3,7 @@
 using BinaryBuilder, Pkg
 
 name = "OpenCVQt"
-version = v"0.7.0"
+version = v"0.7.1"
 
 # Collection of sources required to complete build
 sources = [
@@ -79,7 +79,7 @@ products = [
 
 # Dependencies that must be installed before this package can be built
 dependencies = [
-    Dependency(PackageSpec(name="Qt_jll", version="5.15.1")),
+    Dependency(PackageSpec(name="Qt_jll", version="5.15.2")),
     Dependency(PackageSpec(name="Libglvnd_jll", version="1.3.0")),
 ]
 
