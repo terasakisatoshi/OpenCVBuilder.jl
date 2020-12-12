@@ -83,6 +83,7 @@ products = [
 dependencies = [
     Dependency(PackageSpec(name="Qt_jll", version="5.15.2")),
     Dependency(PackageSpec(name="Libglvnd_jll", version="1.3.0")),
+    Dependency(PackageSpec(name="Zlib_jll", version="1.2.12")),
 ]
 
 # Build the tarballs, and possibly a `build.jl` as well.
