@@ -2,8 +2,8 @@
 # `julia build_tarballs.jl --help` to see a usage message.
 using BinaryBuilder, Pkg
 
-name = "OpenCVQt"
-version = v"0.7.1"
+name = "LibOpenCV"
+version = v"0.0.1"
 
 # Collection of sources required to complete build
 sources = [
@@ -15,7 +15,7 @@ sources = [
 # Bash recipe for building across all platforms
 script = raw"""
 
-# Build with Qt for linux platform except i686
+# Build with Qt for linux-gnu platform except i686
 if [[ $target == "x86_64-linux-gnu" ]]; then
   linux_extra_flags="-DWITH_QT=ON"
 fi
@@ -42,21 +42,23 @@ install_license opencv/LICENSE
 
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
-platforms = [
-   Linux(:i686, libc=:glibc),
-   Linux(:x86_64, libc=:glibc),
-   Linux(:aarch64, libc=:glibc),
-   Linux(:armv7l, libc=:glibc, call_abi=:eabihf),
-   #Linux(:powerpc64le, libc=:glibc), <- build should pass, but it takes much time to build.
-   Linux(:i686, libc=:musl),
-   #Linux(:x86_64, libc=:musl), <- fails
-   Linux(:aarch64, libc=:musl),
-   Linux(:armv7l, libc=:musl, call_abi=:eabihf),
-   MacOS(:x86_64),
-   #FreeBSD(:x86_64), <- fails,
-   Windows(:i686),
-   Windows(:x86_64),
-] |> expand_cxxstring_abis
+ platforms = [
+    Platform("i686", "linux", libc="glibc"),
+    Platform("x86_64", "linux", libc="glibc"),
+    Platform("aarch64", "linux", libc="glibc"),
+    Platform("armv7l", "linux", libc="glibc"),
+    #Platform("powerpc64le", "linux", libc="glibc"), <- build should pass, but it takes much time to build.
+    Platform("i686", "linux", libc="musl"),
+    #Platform("x86_64", "linux", libc="musl"), <- fails
+    Platform("aarch64", "linux", libc="musl"),
+    Platform("armv7l", "linux", libc="musl"),
+    Platform("armv7l", "linux", libc="musl"),
+    Platform("x86_64", "macOS"),
+    #FreeBSD(:x86_64), <- fails,
+    Platform("i686", "windows"),
+    Platform("x86_64", "windows"),
+ ] |> expand_cxxstring_abis
+
 
 # The products that we will ensure are always built
 products = [
