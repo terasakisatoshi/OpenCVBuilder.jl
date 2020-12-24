@@ -9,7 +9,7 @@ version = v"0.0.1"
 sources = [
     GitSource(
       "https://github.com/opencv/opencv.git",
-      "d5fd2f0155ffad366f9ac912dfd6d189a7a6a98e",
+      "1363496c1106606684d40447f5d1149b2c66a9f8", #4.5.1
     ),
 ]
 # Bash recipe for building across all platforms
