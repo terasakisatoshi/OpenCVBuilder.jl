@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     git \
     && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* # clean up
+    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* # clean up
 
 RUN git clone https://github.com/JuliaInterop/libcxxwrap-julia.git && \
     cmake -DJulia_EXECUTABLE=`which julia` -S libcxxwrap-julia -B libcxxwrap-julia-build && \
